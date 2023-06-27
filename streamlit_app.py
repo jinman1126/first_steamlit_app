@@ -34,6 +34,15 @@ fruits_to_show = my_fruit_list.loc[fruits_selected]
 # Display the table on the page.
 streamlit.dataframe(fruits_to_show)
 
+#fruityvice function to fetch data from API 
+def get_fruityvice_data(this_fruit_choice):
+	fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + this_fruit_choice)
+
+	#format the json data
+	fruityvice_normalized = pandas.json_normalize(fruityvice_response.json())
+
+	return fruityvice_normalized
+
 #new section header
 streamlit.header("Fruityvice Fruit Advice!")
 
@@ -47,13 +56,10 @@ try:
 
 	#otherwise make the api call 
 	else:
-		fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + fruit_choice)
-
-		#format the json data
-		fruityvice_normalized = pandas.json_normalize(fruityvice_response.json())
+		fruityvice_response = get_fruityvice_data(fruit_choice)
 
 		#write formatted data to the stream
-		streamlit.dataframe(fruityvice_normalized)
+		streamlit.dataframe(fruityvice_response)
 
 #exit try with URLError
 except URLError as e:
