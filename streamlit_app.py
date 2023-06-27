@@ -37,17 +37,28 @@ streamlit.dataframe(fruits_to_show)
 #new section header
 streamlit.header("Fruityvice Fruit Advice!")
 
-fruit_choice = streamlit.text_input('What fruit would you like information about?','Kiwi')
-streamlit.write('The user entered ', fruit_choice)
+#add error handling 
+try:
+	fruit_choice = streamlit.text_input('What fruit would you like information about?','Kiwi')
 
-fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + fruit_choice)
-#streamlit.text(fruityvice_response.json()) #just writes raw data to screen
+	#if no entry, then ask for one 
+	if not fruit_choice:
+		streamlit.error('Please select a fruit to get information.')
 
-#format the json data
-fruityvice_normalized = pandas.json_normalize(fruityvice_response.json())
+	#otherwise make the api call 
+	else:
+		fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + fruit_choice)
 
-#write formatted data to the stream
-streamlit.dataframe(fruityvice_normalized)
+		#format the json data
+		fruityvice_normalized = pandas.json_normalize(fruityvice_response.json())
+
+		#write formatted data to the stream
+		streamlit.dataframe(fruityvice_normalized)
+
+#exit try with URLError
+except URLError as e:
+	streamlit.error()
+
 
 streamlit.stop()
 #import data from snowflake
