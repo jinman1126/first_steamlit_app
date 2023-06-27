@@ -83,8 +83,12 @@ if streamlit.button('Get Fruit Load List'):
 
 #function to insert fruit rows 
 def insert_row_snowflake(new_fruit):
+	
+	#cleanse inputs #TODO add a proper cleansing function to call rather than just a strip 
+	new_fruit:string = new_fruit.strip()
+
 	with my_cnx.cursor() as my_cur:
-		my_cur.execute("insert into fruit_load_list values ('from streamlit')")
+		my_cur.execute("insert into fruit_load_list values ('" + new_fruit + "')")
 		return "Thanks for adding " + new_fruit 
 
 #text box for user to input a new fruit they want	
